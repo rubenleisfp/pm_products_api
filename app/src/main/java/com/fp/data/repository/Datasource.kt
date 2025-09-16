@@ -1,7 +1,7 @@
 package com.fp.data.repository
 
 import com.fp.R
-import com.fp.ui.product.Product
+import com.fp.ui.store.Product
 import com.fp.ui.screens.artist.Artist
 import java.time.LocalDate
 

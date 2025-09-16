@@ -1,8 +1,5 @@
-package com.fp.ui.product
+package com.fp.ui.store
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import java.time.LocalDate
 import kotlinx.serialization.Serializable
 
 

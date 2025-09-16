@@ -1,4 +1,4 @@
-package com.fp.ui.product
+package com.fp.ui.store
 
 import kotlinx.serialization.Serializable
 

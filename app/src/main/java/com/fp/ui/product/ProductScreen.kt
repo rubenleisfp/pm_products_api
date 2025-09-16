@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.fp.R
 import com.fp.data.repository.Datasource
 import com.fp.ui.screens.artist.Artist
@@ -185,6 +186,10 @@ fun ProductCard(product: Product, numberInTheList: String, modifier: Modifier = 
             )
             Text(text = product.price.toString(), modifier = modifier.padding(15.dp))
         }
+        AsyncImage(
+            model = product.thumbnail,
+            contentDescription = "Translated description of what the image contains"
+        )
         Spacer(modifier = modifier.height(10.dp))
         //Text(text = stringResource(artist.stringResourceId), fontSize = 10.sp)
     }
@@ -203,7 +208,7 @@ fun ProductListPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProductCardPreview() {
-    val product = Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20,"")
+    val product = Product(1, "Essence Mascara Lash Princess", "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.", "beauty", 9.99, 2.56, 99,"https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp")
     Pm_products_apiTheme {
         ProductCard(product, "1")
     }

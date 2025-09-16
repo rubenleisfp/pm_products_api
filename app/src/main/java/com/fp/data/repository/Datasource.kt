@@ -1,33 +1,24 @@
-/*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.fp.data;
+package com.fp.data.repository
 
-
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.fp.R
-import com.fp.model.Artist;
+import com.fp.ui.product.Product
+import com.fp.ui.screens.artist.Artist
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 
 /**
  * [Datasource] generates a list of [Affirmation]
  */
+
+
+//https://dummyjson.com/products?limit=30&skip=0&select=title,description,category,price,rating,stock,thumbnail
 class Datasource() {
+
+    fun loadProducts(): List<Product> {
+        return listOf<Product>(
+            Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20),
+            Product(2, "Lapiz", "Lapiz increible", "Papeleria", 2.0, 4.2, 10))
+    }
+
     fun loadArtist(): List<Artist> {
         return listOf<Artist>(
             Artist(

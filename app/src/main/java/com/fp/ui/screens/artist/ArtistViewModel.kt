@@ -1,8 +1,8 @@
-package com.fp.vm
+package com.fp.ui.screens.artist
 
 import androidx.lifecycle.ViewModel
-import com.fp.data.Datasource
-import com.fp.model.Artist
+import com.fp.data.repository.Datasource
+import com.fp.ui.screens.artist.Artist
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

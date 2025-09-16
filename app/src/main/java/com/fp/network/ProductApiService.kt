@@ -2,13 +2,9 @@ package com.fp.network
 
 
 import com.fp.ui.product.Product
+import com.fp.ui.product.ProductPage
 
-data class ProductsResponse(
-    val products: List<Product>,
-    val total: Int,
-    val skip: Int,
-    val limit: Int
-)
+
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Response
@@ -25,7 +21,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 
 
 //https://dummyjson.com/products?limit=30&skip=0&select=title,description,category,price,rating,stock,thumbnail
-private const val BASE_URL = "https://dummyjson.com/products/"
+private const val BASE_URL = "https://dummyjson.com/"
 
 private val json = Json {
     ignoreUnknownKeys = true
@@ -46,7 +42,7 @@ interface ProductApiService {
         @Query("limit") limit: Int = 30,
         @Query("skip") skip: Int = 0,
         @Query("select") select: String = "title,description,category,price,rating,stock,thumbnail"
-    ): Response<ProductsResponse>
+    ): Response<ProductPage>
 }
 
 /**

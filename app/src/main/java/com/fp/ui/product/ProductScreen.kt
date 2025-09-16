@@ -73,7 +73,7 @@ fun ProductForm(productState : ProductState) {
 
             ActionEnum.READ ->
                 ProductList(
-                    productList = productState.products
+                    productList = productState.productPage.products
                 )
 
 
@@ -203,7 +203,7 @@ fun ProductListPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProductCardPreview() {
-    val product = Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20)
+    val product = Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20,"")
     Pm_products_apiTheme {
         ProductCard(product, "1")
     }

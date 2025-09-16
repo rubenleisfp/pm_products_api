@@ -15,8 +15,8 @@ class Datasource() {
 
     fun loadProducts(): List<Product> {
         return listOf<Product>(
-            Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20),
-            Product(2, "Lapiz", "Lapiz increible", "Papeleria", 2.0, 4.2, 10))
+            Product(1, "Boli", "Boli Bic sensancional", "Papeleria", 3.12, 3.0, 20,""),
+            Product(2, "Lapiz", "Lapiz increible", "Papeleria", 2.0, 4.2, 10,""))
     }
 
     fun loadArtist(): List<Artist> {

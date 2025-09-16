@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get() // Asegúrate de que
+    //  id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 android {

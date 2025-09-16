@@ -1,10 +1,13 @@
 package com.fp.ui.product
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,10 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -40,15 +47,70 @@ import java.time.LocalDate
 fun ProductApp(productViewModel: ProductViewModel) {
 
     val products by productViewModel.products.collectAsState()
-    ProductList(
-        productList = products
-    )
+    val productState by productViewModel.uiState.collectAsState()
+    ProductForm(productState = productState)
     /*
         val artists by artistViewModel.artists.collectAsState()
         ArtistList(
             artistList = artists
         )*/
 }
+
+
+@Composable
+fun ProductForm(productState : ProductState) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.tertiaryContainer),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        when (productState.action) {
+            ActionEnum.IS_LOADING ->
+                IsLoading()
+
+            ActionEnum.ERROR -> ErrorScreen()
+
+            ActionEnum.READ ->
+                ProductList(
+                    productList = productState.products
+                )
+
+
+        }
+    }
+}
+
+@Composable
+fun IsLoading() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.errorContainer),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.error_message),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+        }
+    }
+
+
+}
+
 
 @Composable
 fun ProductList(productList: List<Product>, modifier: Modifier = Modifier) {
@@ -61,6 +123,8 @@ fun ProductList(productList: List<Product>, modifier: Modifier = Modifier) {
         }
     }
 }
+
+
 
 @Composable
 fun ProductCard(product: Product, numberInTheList: String, modifier: Modifier = Modifier) {

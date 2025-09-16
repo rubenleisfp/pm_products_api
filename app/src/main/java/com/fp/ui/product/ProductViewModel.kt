@@ -38,8 +38,9 @@ class ProductViewModel : ViewModel() {
             try {
                 val response = ProductApi.retrofitService.getProducts()
                 if (response.isSuccessful) {
-                    val productList = response.body() ?: emptyList()
-                    _uiState.value = _uiState.value.copy(productList, action = ActionEnum.READ)
+                    val productsResponse = response.body()
+                    val productList = productsResponse?.products ?: emptyList()
+                    _uiState.value = _uiState.value.copy(products = productList, action = ActionEnum.READ)
                     Log.i(LOG_TAG, "Load was Ok")
                 } else {
                     _uiState.value = _uiState.value.copy(action = ActionEnum.ERROR)

@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.fp.ui.product.ProductApp
+import com.fp.ui.product.ProductViewModel
 import com.fp.ui.theme.Pm_products_apiTheme
 import com.fp.ui.screens.artist.ArtistViewModel
 import com.fp.ui.screens.artist.ArtistApp
 
 class MainActivity : ComponentActivity() {
 
+    /*
     private val artistViewModel by viewModels<ArtistViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,24 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ArtistApp(artistViewModel)
+                }
+            }
+        }
+    }*/
+
+    private val productViewModel by viewModels<ProductViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        productViewModel.loadProductsV2()
+        super.onCreate(savedInstanceState)
+        setContent {
+            Pm_products_apiTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ProductApp(productViewModel)
                 }
             }
         }

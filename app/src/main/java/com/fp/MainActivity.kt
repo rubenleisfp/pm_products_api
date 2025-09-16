@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
     private val storeViewModel by viewModels<StoreViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        storeViewModel.loadProductsV2()
+        storeViewModel.loadProducts()
         super.onCreate(savedInstanceState)
         setContent {
             Pm_products_apiTheme {

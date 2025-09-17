@@ -17,14 +17,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -51,11 +54,11 @@ import com.fp.ui.theme.Pm_products_apiTheme
 @Composable
 fun StoreApp(storeViewModel: StoreViewModel) {
     val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(storeState = productState)
+    StoreGrid(storeState = productState, onClick = { storeViewModel.onDetailSelected(it) })
 }
 
 @Composable
-fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
+fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
 
     Scaffold(
         topBar = {
@@ -63,35 +66,35 @@ fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
         }
     ) { innerPadding ->
 
-        when (storeState.action) {
-            ActionEnum.IS_LOADING ->
-                IsLoading()
 
-            ActionEnum.ERROR -> ErrorScreen()
-
-            ActionEnum.READ ->
-                Column(
-                    modifier = modifier
-                        .padding(innerPadding),
-                    verticalArrangement = Arrangement.spacedBy(36.dp)
-                ) {
-                    ProductList(
-                        productList = storeState.productPage.products,
-                        modifier = modifier
-                    )
-                }
-
-
+        Column(
+            modifier = modifier
+                .padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(36.dp)
+        ) {
+            ProductList(
+                productWrapperList = storeState.productWrapperList,
+                onClick = onClick,
+                modifier = modifier
+            )
         }
+
+
     }
 }
 
+
 @Composable
-fun ProductList(productList: List<Product>, modifier: Modifier = Modifier) {
+fun ProductList(
+    productWrapperList: List<ProductWrapper>,
+    onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier = modifier) {
-        itemsIndexed(productList) { index, product ->
+        itemsIndexed(productWrapperList) { index, productWrapper ->
             ProductItem(
-                product = product,
+                productWrapper = productWrapper,
+                onClick = onClick,
                 modifier = modifier
             )
         }
@@ -123,69 +126,99 @@ fun StoreTopAppBar(modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun IsLoading() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier
-                .size(dimensionResource(id = R.dimen.image_size_large)),
-            painter = painterResource(R.drawable.loading),
-            contentDescription = null
-        )
-
-     }
-}
 
 @Composable
-fun ErrorScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.errorContainer),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.error_message),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onErrorContainer
-            )
-        }
-    }
-
-
-}
-
-
-@Composable
-fun ProductItem(product: Product, modifier: Modifier = Modifier ) {
+fun ProductItem(
+    productWrapper: ProductWrapper,
+    onClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
-        Column(   modifier = Modifier
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMedium
+        Column(
+            modifier = Modifier
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
                 )
-            )) {
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.padding_small))
             ) {
-                ProductIcon(product.thumbnail)
-                ProductInformation(product = product)
+                ProductIcon(productWrapper.product.thumbnail)
+                ProductInformation(product = productWrapper.product)
                 Spacer(modifier = Modifier.weight(1f))
+                ProductItemButton(
+                    expanded = productWrapper.expanded,
+                    onClick = { onClick(productWrapper.id) }
+                )
 
             }
+            if (productWrapper.expanded) {
+                ProductDetails(
+                    productWrapper = productWrapper,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.padding_medium),
+                        top = dimensionResource(R.dimen.padding_small),
+                        end = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_medium)
+                    )
+                )
+            }
             EnviarEmail()
-
         }
+    }
+}
+
+/**
+ * Muestra el hobby del perror cuando se haga click sobre el
+ */
+@Composable
+fun ProductDetails(
+    productWrapper: ProductWrapper,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(R.string.descripcion),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
+            text = productWrapper.product.description,
+            style = MaterialTheme.typography.labelSmall
+        )
+        Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)))
+        Text(
+            text = stringResource(R.string.stock),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
+            text = productWrapper.product.stock.toString(),
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+@Composable
+private fun ProductItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = stringResource(R.string.expand_button_content_description),
+            tint = MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
@@ -211,7 +244,7 @@ fun EnviarEmail() {
 fun ProductIcon(
     thumbnail: String,
     modifier: Modifier = Modifier
-)  {
+) {
     AsyncImage(
         model = thumbnail,
         modifier = modifier
@@ -222,7 +255,6 @@ fun ProductIcon(
         contentDescription = "Imagen del producto"
     )
 }
-
 
 
 @Composable
@@ -247,7 +279,7 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
 @Composable
 fun ProductListPreview() {
     Pm_products_apiTheme {
-        ProductList(Datasource().loadProducts())
+        ProductList(Datasource().loadProductsWrapper(), onClick = {})
     }
 }
 
@@ -265,8 +297,9 @@ fun ProductItemPreview() {
         99,
         "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
     )
+    val productWrapper = ProductWrapper(product = product, id = 1, expanded = true)
     Pm_products_apiTheme {
-        ProductItem(product)
+        ProductItem(productWrapper, onClick = {})
     }
 }
 

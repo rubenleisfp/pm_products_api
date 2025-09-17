@@ -3,4 +3,7 @@
     <string name="error_message">Error al cargar los productos</string>
     <string name="precio">Precio  €</string>
     <string name="enviar_recomendacion">Recomendar</string>
+    <string name="expand_button_content_description">más</string>
+    <string name="descripcion">Descripción:</string>
+    <string name="stock">Stock:</string>
 </resources>

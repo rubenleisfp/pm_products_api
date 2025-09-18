@@ -7,6 +7,7 @@ import com.fp.network.ProductApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -49,6 +50,19 @@ class StoreViewModel : ViewModel() {
         }
         var productPageWrapper = ProductPageWrapper(productsWrapperList, productPage.total, productPage.skip, productPage.limit)
         return productPageWrapper
+    }
+
+    fun onDetailSelected(productId: Int) {
+        _uiState.update { currentState ->
+            val updatedProductWrapperList = currentState.productPageWrapper.productsWrapper.map { productWrapper ->
+                if (productWrapper.id == productId) {
+                    productWrapper.copy(expanded = !productWrapper.expanded)
+                } else {
+                    productWrapper
+                }
+            }
+            currentState.copy(productPageWrapper = currentState.productPageWrapper.copy(productsWrapper = updatedProductWrapperList))
+        }
     }
 
 }

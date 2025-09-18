@@ -68,7 +68,7 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx) // Accede a 'retrofit-converter-kotlinx'
     implementation(libs.okhttp.core) // Accede a 'okhttp-core
     implementation(libs.coil.compose)
-
+    implementation(libs.androidx.compose.material.icons.extended)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

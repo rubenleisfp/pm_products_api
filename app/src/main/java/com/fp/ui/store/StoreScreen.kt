@@ -17,11 +17,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -51,11 +56,11 @@ import com.fp.ui.theme.Pm_products_apiTheme
 @Composable
 fun StoreApp(storeViewModel: StoreViewModel) {
     val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(storeState = productState)
+    StoreGrid(storeState = productState,  onClick = { storeViewModel.onDetailSelected(it) })
 }
 
 @Composable
-fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
+fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifier = Modifier) {
 
     Scaffold(
         topBar = {
@@ -76,7 +81,8 @@ fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
                     verticalArrangement = Arrangement.spacedBy(36.dp)
                 ) {
                     ProductList(
-                        productList = storeState.productPageWrapper
+                        productWrapperList = storeState.productPageWrapper.productsWrapper,
+                        onClick = onClick,
                         modifier = modifier
                     )
                 }
@@ -87,11 +93,12 @@ fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
 }
 
 @Composable
-fun ProductList(productList: List<Product>, modifier: Modifier = Modifier) {
+fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit,modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
-        itemsIndexed(productList) { index, product ->
+        itemsIndexed(productWrapperList) { index, productWrapper ->
             ProductItem(
-                product = product,
+                productWrapper = productWrapper,
+                onClick = onClick,
                 modifier = modifier
             )
         }
@@ -164,7 +171,7 @@ fun ErrorScreen() {
 
 
 @Composable
-fun ProductItem(product: Product, modifier: Modifier = Modifier ) {
+fun ProductItem(productWrapper: ProductWrapper,     onClick: (Int) -> Unit, modifier: Modifier = Modifier ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
         Column(   modifier = Modifier
             .animateContentSize(
@@ -178,14 +185,82 @@ fun ProductItem(product: Product, modifier: Modifier = Modifier ) {
                     .fillMaxWidth()
                     .padding(dimensionResource(id = R.dimen.padding_small))
             ) {
-                ProductIcon(product.thumbnail)
-                ProductInformation(product = product)
+                ProductIcon(productWrapper.product.thumbnail)
+                ProductInformation(product = productWrapper.product)
                 Spacer(modifier = Modifier.weight(1f))
+                ProductItemButton(
+                    expanded = productWrapper.expanded,
+                    onClick = { onClick(productWrapper.id) }
+                )
 
+            }
+            if (productWrapper.expanded) {
+                ProductDetails(
+                    productWrapper = productWrapper,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.padding_medium),
+                        top = dimensionResource(R.dimen.padding_small),
+                        end = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_medium)
+                    )
+                )
             }
             EnviarEmail()
 
         }
+    }
+}
+
+@Composable
+fun ProductDetails(
+    productWrapper: ProductWrapper,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = stringResource(R.string.descripcion),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
+            text = productWrapper.product.description,
+            style = MaterialTheme.typography.labelSmall
+        )
+        Spacer(modifier = Modifier.padding(dimensionResource(R.dimen.padding_small)))
+        Text(
+            text = stringResource(R.string.stock),
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
+            text = productWrapper.product.stock.toString(),
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+/**
+ * Muestra un botón para expandir o contraer los detalles de un producto.
+ *
+ * @param expanded Indica si los detalles del producto están expandidos o no.
+ * @param onClick La función que se ejecutará cuando se haga clic en el botón.
+ * @param modifier El modificador de diseño para este componente.
+ */
+@Composable
+private fun ProductItemButton(
+    expanded: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+            contentDescription = stringResource(R.string.expand_button_content_description),
+            tint = MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
@@ -247,7 +322,7 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
 @Composable
 fun ProductListPreview() {
     Pm_products_apiTheme {
-        ProductList(Datasource().loadProducts())
+        ProductList(Datasource().loadProductsWrapper(), onClick = {})
     }
 }
 
@@ -265,8 +340,9 @@ fun ProductItemPreview() {
         99,
         "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
     )
+    val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
     Pm_products_apiTheme {
-        ProductItem(product)
+        ProductItem(productWrapper, onClick = {})
     }
 }
 

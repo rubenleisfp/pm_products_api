@@ -1,15 +1,13 @@
 package com.fp.ui.store
 
-import android.util.Log
+
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.fp.data.repository.Datasource
-import com.fp.network.ProductApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+
 
 /**
  * Created by Your name on 14/09/2025.

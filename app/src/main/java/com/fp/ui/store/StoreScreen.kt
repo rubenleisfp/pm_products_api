@@ -48,15 +48,34 @@ import com.fp.data.repository.Datasource
 import com.fp.ui.theme.Pm_products_apiTheme
 
 /**
- * Created by Your name on 16/09/2025.
+ * Esta es la vista principal de la aplicación, donde se muestran los productos.
+ *
+ * @param storeViewModel El ViewModel encargado de administrar los estados de la aplicación.
  */
 
+
+/**
+ * Muestra una cuadrícula de productos.
+ *
+ * @param storeState El estado actual de la aplicación.
+ * @param onClick La función que se ejecutará cuando se haga clic en un producto.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 fun StoreApp(storeViewModel: StoreViewModel) {
     val productState by storeViewModel.uiState.collectAsState()
     StoreGrid(storeState = productState, onClick = { storeViewModel.onDetailSelected(it) })
 }
 
+
+
+/**
+ * Muestra una lista de productos en forma de parrilla.
+ *
+ * @param productWrapperList La lista de productos que se mostrarán.
+ * @param onClick La función que se ejecutará cuando se haga clic en un producto.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
 
@@ -101,7 +120,11 @@ fun ProductList(
     }
 }
 
-
+/**
+ * Muestra la barra de navegación superior de la aplicación.
+ *
+ * @param modifier El modificador de diseño para este componente.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoreTopAppBar(modifier: Modifier = Modifier) {
@@ -125,8 +148,13 @@ fun StoreTopAppBar(modifier: Modifier = Modifier) {
     )
 }
 
-
-
+/**
+ * Muestra un elemento de producto en la cuadrícula de productos.
+ *
+ * @param productWrapper El objeto de producto que se mostrará.
+ * @param onClick La función que se ejecutará cuando se haga clic en el producto.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 fun ProductItem(
     productWrapper: ProductWrapper,
@@ -174,7 +202,10 @@ fun ProductItem(
 }
 
 /**
- * Muestra el hobby del perror cuando se haga click sobre el
+ * Muestra los detalles de un producto cuando se expande.
+ *
+ * @param productWrapper El objeto de producto que se mostrará.
+ * @param modifier El modificador de diseño para este componente.
  */
 @Composable
 fun ProductDetails(
@@ -204,6 +235,13 @@ fun ProductDetails(
     }
 }
 
+/**
+ * Muestra un botón para expandir o contraer los detalles de un producto.
+ *
+ * @param expanded Indica si los detalles del producto están expandidos o no.
+ * @param onClick La función que se ejecutará cuando se haga clic en el botón.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 private fun ProductItemButton(
     expanded: Boolean,
@@ -222,6 +260,9 @@ private fun ProductItemButton(
     }
 }
 
+/**
+ * Muestra un botón para enviar una recomendación por email.
+ */
 @Composable
 fun EnviarEmail() {
     val context = LocalContext.current
@@ -239,7 +280,12 @@ fun EnviarEmail() {
     }
 }
 
-
+/**
+ * Muestra una imagen de un producto.
+ *
+ * @param thumbnail La URL de la imagen del producto.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 fun ProductIcon(
     thumbnail: String,
@@ -256,7 +302,12 @@ fun ProductIcon(
     )
 }
 
-
+/**
+ * Muestra la información de un producto.
+ *
+ * @param product El objeto de producto que se mostrará.
+ * @param modifier El modificador de diseño para este componente.
+ */
 @Composable
 fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
@@ -269,8 +320,6 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
             text = stringResource(R.string.precio) + product.price + " €",
             style = MaterialTheme.typography.bodyMedium
         )
-
-
     }
 }
 

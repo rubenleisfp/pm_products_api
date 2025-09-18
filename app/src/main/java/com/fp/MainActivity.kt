@@ -13,24 +13,6 @@ import com.fp.ui.theme.Pm_products_apiTheme
 
 class MainActivity : ComponentActivity() {
 
-    /*
-    private val artistViewModel by viewModels<ArtistViewModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        artistViewModel.loadArtist()
-        super.onCreate(savedInstanceState)
-        setContent {
-            Pm_products_apiTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ArtistApp(artistViewModel)
-                }
-            }
-        }
-    }*/
 
     private val storeViewModel by viewModels<StoreViewModel>()
 

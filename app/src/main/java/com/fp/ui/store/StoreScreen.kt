@@ -76,7 +76,7 @@ fun StoreGrid(storeState: StoreState, modifier : Modifier = Modifier) {
                     verticalArrangement = Arrangement.spacedBy(36.dp)
                 ) {
                     ProductList(
-                        productList = storeState.productPage.products,
+                        productList = storeState.productPageWrapper
                         modifier = modifier
                     )
                 }

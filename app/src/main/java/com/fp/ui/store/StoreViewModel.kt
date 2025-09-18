@@ -27,7 +27,8 @@ class StoreViewModel : ViewModel() {
                 val response = ProductApi.retrofitService.getProducts()
                 if (response.isSuccessful) {
                     val productPage = response.body()
-                    productPage?.let { _uiState.value = _uiState.value.copy(productPage = it, action = ActionEnum.READ) }
+                    val productPageWrapper = getWrapper(productPage!!)
+                     _uiState.value = _uiState.value.copy(productPageWrapper = productPageWrapper, action = ActionEnum.READ) 
                     Log.i(LOG_TAG, "Load was Ok")
                 } else {
                     _uiState.value = _uiState.value.copy(action = ActionEnum.ERROR)
@@ -39,6 +40,15 @@ class StoreViewModel : ViewModel() {
             }
 
         }
+    }
+
+    fun getWrapper(productPage: ProductPage): ProductPageWrapper {
+
+        val productsWrapperList = productPage.products.mapIndexed { index, product ->
+            ProductWrapper(product = product, id = index, expanded = false)
+        }
+        var productPageWrapper = ProductPageWrapper(productsWrapperList, productPage.total, productPage.skip, productPage.limit)
+        return productPageWrapper
     }
 
 }

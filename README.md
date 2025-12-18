@@ -66,8 +66,6 @@ La Inyección de Dependencias se implementa de forma manual a través de la clas
 
 El flujo de datos es un ciclo cerrado y predecible:
 
-![MVI Data Flow](https://miro.medium.com/v2/resize:fit:1400/1*5A9s1hp34n2a5dF22a_72g.png)
-
 1.  **Acción (Intent)**: La **UI** despacha una `Action` al `Store` (ej: `ActionEnum.READ`).
 2.  **Procesamiento (`Store`)**: El `Store` identifica la acción. Si requiere un **efecto secundario** (como una llamada a la API), primero despacha una acción para reflejar un estado intermedio (ej: `IS_LOADING`).
 3.  **Efecto Secundario (`Store`)**: El `Store` ejecuta la operación asíncrona (llama al `Repository`). Al completarse, despacha una nueva acción con el resultado (`READ` con los datos, o `ERROR` con una excepción).

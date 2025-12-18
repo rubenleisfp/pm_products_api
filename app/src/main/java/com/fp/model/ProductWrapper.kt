@@ -1,4 +1,4 @@
-package com.fp.ui.store
+package com.fp.model
 
 /**
  * Contiene un objeto de producto, un indicador de si está expandido y un ID único.

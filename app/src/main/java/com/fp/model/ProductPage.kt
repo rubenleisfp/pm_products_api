@@ -1,7 +1,6 @@
-package com.fp.ui.store
+package com.fp.model
 
 import kotlinx.serialization.Serializable
-
 
 @Serializable
 data class ProductPage(

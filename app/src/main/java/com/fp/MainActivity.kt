@@ -7,35 +7,16 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.fp.ui.store.StoreApp
 import com.fp.ui.store.StoreViewModel
 import com.fp.ui.theme.Pm_products_apiTheme
 
 class MainActivity : ComponentActivity() {
 
-    /*
-    private val artistViewModel by viewModels<ArtistViewModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        artistViewModel.loadArtist()
-        super.onCreate(savedInstanceState)
-        setContent {
-            Pm_products_apiTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ArtistApp(artistViewModel)
-                }
-            }
-        }
-    }*/
-
     private val storeViewModel by viewModels<StoreViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        storeViewModel.loadProducts()
         super.onCreate(savedInstanceState)
         setContent {
             Pm_products_apiTheme {
@@ -43,6 +24,9 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
+                    val storeViewModel: StoreViewModel =
+                        viewModel(factory = StoreViewModel.Factory)
+                    storeViewModel.loadProducts()
                     StoreApp(storeViewModel)
                 }
             }

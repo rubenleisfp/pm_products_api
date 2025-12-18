@@ -1,5 +1,7 @@
 package com.fp.ui.store
 
+import com.fp.model.ProductPageWrapper
+
 /**
  * Created by Your name on 16/09/2025.
  */

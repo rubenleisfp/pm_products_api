@@ -47,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.fp.R
 import com.fp.data.repository.Datasource
+import com.fp.model.Product
+import com.fp.model.ProductWrapper
 import com.fp.ui.theme.Pm_products_apiTheme
 
 /**
@@ -93,7 +95,7 @@ fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifie
 }
 
 @Composable
-fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit,modifier: Modifier = Modifier) {
+fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(productWrapperList) { index, productWrapper ->
             ProductItem(
@@ -171,7 +173,7 @@ fun ErrorScreen() {
 
 
 @Composable
-fun ProductItem(productWrapper: ProductWrapper,     onClick: (Int) -> Unit, modifier: Modifier = Modifier ) {
+fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier: Modifier = Modifier ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
         Column(   modifier = Modifier
             .animateContentSize(

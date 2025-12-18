@@ -1,7 +1,7 @@
 package com.fp.network
 
 
-import com.fp.ui.store.ProductPage
+import com.fp.model.ProductPage
 
 
 import kotlinx.serialization.json.Json
@@ -39,11 +39,3 @@ interface ProductApiService {
     ): Response<ProductPage>
 }
 
-/**
- * A public Api object that exposes the lazy-initialized Retrofit service
- */
-object ProductApi {
-    val retrofitService: ProductApiService by lazy {
-        retrofit.create(ProductApiService::class.java)
-    }
-}

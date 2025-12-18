@@ -1,5 +1,8 @@
 # PM Products API - Rama MVI
 
+En esta rama se muestran una serie de productos en una lista, con la posibilidad de expandir cada producto para ver sus detalles.
+Los producto se extraen de un API REST.
+
 Este documento detalla la arquitectura técnica de la rama `MVI` del proyecto `pm_products_api`. La aplicación ha sido refactorizada para seguir un patrón de diseño **MVI (Model-View-Intent)** sobre la base de una **Arquitectura Limpia (Clean Architecture)**.
 
 El objetivo de esta arquitectura es conseguir un flujo de datos estrictamente unidireccional y un manejo de estado predecible, haciendo la aplicación aún más robusta, depurable y fácil de testear.

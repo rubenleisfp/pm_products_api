@@ -1,4 +1,4 @@
-package com.fp.ui.store
+package com.fp.model
 
 /**
  * Created by Your name on 17/09/2025.

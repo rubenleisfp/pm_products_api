@@ -1,7 +1,7 @@
 package com.fp.network
 
 
-import com.fp.ui.store.ProductPage
+import com.fp.model.ProductPage
 
 
 import kotlinx.serialization.json.Json

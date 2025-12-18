@@ -3,6 +3,9 @@ package com.fp.ui.store
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fp.model.ProductPage
+import com.fp.model.ProductPageWrapper
+import com.fp.model.ProductWrapper
 import com.fp.network.ProductApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +51,12 @@ class StoreViewModel : ViewModel() {
         val productsWrapperList = productPage.products.mapIndexed { index, product ->
             ProductWrapper(product = product, id = index, expanded = false)
         }
-        var productPageWrapper = ProductPageWrapper(productsWrapperList, productPage.total, productPage.skip, productPage.limit)
+        var productPageWrapper = ProductPageWrapper(
+            productsWrapperList,
+            productPage.total,
+            productPage.skip,
+            productPage.limit
+        )
         return productPageWrapper
     }
 

@@ -1,8 +1,7 @@
 package com.fp.data.repository
 
-import com.fp.R
-import com.fp.ui.store.Product
-import com.fp.ui.store.ProductWrapper
+import com.fp.model.Product
+import com.fp.model.ProductWrapper
 
 /**
  * [Datasource] generates a list of [Product]

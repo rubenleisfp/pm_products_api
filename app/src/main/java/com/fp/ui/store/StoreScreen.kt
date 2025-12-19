@@ -52,6 +52,7 @@ import com.fp.data.Datasource
 import com.fp.model.Product
 import com.fp.model.ProductPageWrapper
 import com.fp.model.ProductWrapper
+import com.fp.ui.favorite.FavoriteViewModel
 import com.fp.ui.theme.Pm_products_apiTheme
 
 /**
@@ -64,9 +65,9 @@ import com.fp.ui.theme.Pm_products_apiTheme
  */
 
 @Composable
-fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel) {
+fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel, favoriteViewModel: FavoriteViewModel) {
     val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(navController, storeState = productState,  onClick = { storeViewModel.onDetailSelected(it) })
+    StoreGrid(navController, storeState = productState,  onExpand = { storeViewModel.onDetailSelected(it) }, onClickAddFavorite = {favoriteViewModel.addFavoriteProduct(it)})
 }
 
 /**
@@ -75,11 +76,11 @@ fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel) {
  *
  * @param navController The navigation controller used for navigating between screens.
  * @param storeState The current state of the store's UI, containing product data and the current action (e.g., READ, ERROR).
- * @param onClick A lambda function to be invoked when a product item's expand/collapse button is clicked. It passes the product's ID.
+ * @param onExpand A lambda function to be invoked when a product item's expand/collapse button is clicked. It passes the product's ID.
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
-fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifier = Modifier) {
+fun StoreGrid(navController: NavController,storeState: StoreState, onExpand: (Int) -> Unit,  onClickAddFavorite: (Product) -> Unit, modifier : Modifier = Modifier) {
 
     Scaffold(
         topBar = {
@@ -99,8 +100,9 @@ fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int
 
                     ProductList(
                         productWrapperList = storeState.productPageWrapper.productsWrapper,
-                        onClick = onClick,
-                        modifier = modifier
+                        onExpand = onExpand,
+                        onClickAddFavorite = onClickAddFavorite,
+                        modifier = modifier,
                     )
 
                 }
@@ -110,22 +112,24 @@ fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int
     }
 }
 
+
 /**
- * A composable function that displays a vertically scrollable list of products.
- * It uses a [LazyColumn] for efficient rendering of the list, creating and composing
- * only the items that are currently visible on screen. Each item in the list is a [ProductItem].
+ * A composable function that displays a scrollable list of products.
+ * It uses a `LazyColumn` to efficiently render only the items currently visible on screen.
  *
- * @param productWrapperList The list of [ProductWrapper] objects to be displayed.
- * @param onClick A lambda function to be invoked when the expand/collapse button of a [ProductItem] is clicked. It passes the product's ID.
- * @param modifier The modifier to be applied to the [LazyColumn].
+ * @param productWrapperList A list of `ProductWrapper` objects, where each item contains the product data and its UI state (e.g., expanded).
+ * @param onExpand A lambda function to be invoked when a product's expand/collapse button is clicked. It passes the product's ID.
+ * @param onClickAddFavorite A lambda function to be invoked when the "Add to Favorite" button is clicked for a product. It passes the [Product] object.
+ * @param modifier The modifier to be applied to the `LazyColumn`.
  */
 @Composable
-fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun ProductList(productWrapperList: List<ProductWrapper>, onExpand: (Int) -> Unit,  onClickAddFavorite: (Product) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(productWrapperList) { index, productWrapper ->
             ProductItem(
                 productWrapper = productWrapper,
-                onClick = onClick,
+                onExpand = onExpand,
+                onClickAddFavorite = onClickAddFavorite,
                 modifier = modifier
             )
         }
@@ -160,6 +164,16 @@ fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.displayLarge
                 )
+
+                    Image(
+                        modifier = Modifier
+                            .size(dimensionResource(id = R.dimen.image_size))
+                            .padding(dimensionResource(id = R.dimen.padding_small))
+                            .clickable(onClick = {}),  // Agrega lógica para manejar el clic en el cesto de la compra
+                        painter = painterResource(id = R.drawable.shopping_cart),
+                        contentDescription = stringResource(id = R.string.descripcion)
+                    )
+
             }
         },
         modifier = modifier
@@ -194,20 +208,21 @@ fun ErrorScreen() {
 }
 
 
+
 /**
- * A composable function that displays a single product item in a card layout.
- * It shows the product's basic information (icon, name, price) and an expand/collapse button.
- * When expanded, it reveals more details about the product, such as its description and stock level,
- * and also displays a button to share the product recommendation via email.
+ * A composable function that displays a single product item within a card.
+ * This item includes the product's basic information, an icon, and a button to
+ * expand or collapse a more detailed view. The card's content size animates
+ * smoothly when expanded or collapsed. It also includes a button to add the
+ * product to a favorites list.
  *
- * The card's content animates its size when expanding or collapsing.
- *
- * @param productWrapper The [ProductWrapper] object containing the product data and its expanded state.
- * @param onClick A lambda function that is invoked when the expand/collapse button is clicked. It passes the product's ID.
- * @param modifier The modifier to be applied to the [Card].
+ * @param productWrapper The [ProductWrapper] containing the product's data and its expanded state.
+ * @param onExpand A lambda function to be invoked when the expand/collapse button is clicked, passing the product's ID.
+ * @param onClickAddFavorite A lambda function to be invoked when the "Add to Favorite" button is clicked, passing the [Product] object.
+ * @param modifier The modifier to be applied to the card layout.
  */
 @Composable
-fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier: Modifier = Modifier ) {
+fun ProductItem(productWrapper: ProductWrapper, onExpand: (Int) -> Unit, onClickAddFavorite: (Product) -> Unit, modifier: Modifier = Modifier ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
         Column(   modifier = Modifier
             .animateContentSize(
@@ -226,7 +241,7 @@ fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier
                 Spacer(modifier = Modifier.weight(1f))
                 ProductItemButton(
                     expanded = productWrapper.expanded,
-                    onClick = { onClick(productWrapper.id) }
+                    onExpand = { onExpand(productWrapper.id) }
                 )
 
             }
@@ -241,7 +256,7 @@ fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier
                     )
                 )
             }
-            EnviarEmail()
+            AddFavorite(onClickAddFavorite, productWrapper)
 
         }
     }
@@ -287,17 +302,17 @@ fun ProductDetails(
  * Muestra un botón para expandir o contraer los detalles de un producto.
  *
  * @param expanded Indica si los detalles del producto están expandidos o no.
- * @param onClick La función que se ejecutará cuando se haga clic en el botón.
+ * @param onExpand La función que se ejecutará cuando se haga clic en el botón.
  * @param modifier El modificador de diseño para este componente.
  */
 @Composable
 private fun ProductItemButton(
     expanded: Boolean,
-    onClick: () -> Unit,
+    onExpand: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     IconButton(
-        onClick = onClick,
+        onClick = onExpand,
         modifier = modifier
     ) {
         Icon(
@@ -305,6 +320,15 @@ private fun ProductItemButton(
             contentDescription = stringResource(R.string.expand_button_content_description),
             tint = MaterialTheme.colorScheme.secondary
         )
+    }
+}
+
+@Composable
+fun AddFavorite(onClickAddFavorite: (Product) -> Unit, productWrapper: ProductWrapper) {
+    Button(onClick = {
+        onClickAddFavorite(productWrapper.product)
+    }) {
+        Text(stringResource(R.string.add_favorite))
     }
 }
 
@@ -381,7 +405,7 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
 @Composable
 fun ProductListPreview() {
     Pm_products_apiTheme {
-        ProductList(Datasource().loadProductsWrapper(), onClick = {})
+        ProductList(Datasource().loadProductsWrapper(), onExpand = {}, onClickAddFavorite = {})
     }
 }
 
@@ -401,7 +425,7 @@ fun ProductItemPreview() {
     )
     val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
     Pm_products_apiTheme {
-        ProductItem(productWrapper, onClick = {})
+        ProductItem(productWrapper, onExpand = {}, onClickAddFavorite = {})
     }
 }
 
@@ -432,7 +456,8 @@ fun StoreGridPreview() {
         StoreGrid(
             navController = rememberNavController(),
             storeState = storeState,
-            onClick = {}
+            onExpand = {},
+            onClickAddFavorite = {}
         )
     }
     }

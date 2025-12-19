@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fp.Screen
+import com.fp.data.FavoriteProduct
+import com.fp.ui.favorite.FavoriteViewModel
 import com.fp.ui.frontpage.FrontPageScreen
 import com.fp.ui.store.StoreScreen
 import com.fp.ui.store.StoreViewModel
@@ -35,11 +37,15 @@ fun NavigationStack() {
         composable(
             route = Screen.StoreScreen.route
         ) {
-            // Pasa el argumento "text" a la pantalla de detalles
+            // Recuperamos los viewModel para mostrarlos por pantalla
             val storeViewModel: StoreViewModel =
                 viewModel(factory = StoreViewModel.Factory)
+
+            val favoriteViewModel: FavoriteViewModel =
+                viewModel(factory = FavoriteViewModel.Factory)
+
             storeViewModel.loadProducts()
-            StoreScreen(navController = navController, storeViewModel)
+            StoreScreen(navController = navController, storeViewModel, favoriteViewModel)
         }
     }
 

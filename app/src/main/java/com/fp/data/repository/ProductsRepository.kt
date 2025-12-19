@@ -1,5 +1,6 @@
 package com.fp.data.repository
 
+import com.fp.data.ApiException
 import com.fp.model.ProductPage
 import com.fp.model.ProductPageWrapper
 import com.fp.model.ProductWrapper
@@ -27,7 +28,7 @@ class NetworkProductsRepository( private val productApiService: ProductApiServic
      * and returns the wrapped product page.
      *
      * @return A [ProductPageWrapper] containing the list of products and pagination details.
-     * @throws ApiException if the network request is not successful.
+     * @throws com.fp.data.ApiException if the network request is not successful.
      */
     override suspend fun getProducts(): ProductPageWrapper {
         val productsResponse : Response<ProductPage> = productApiService.getProducts()

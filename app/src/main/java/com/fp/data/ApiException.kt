@@ -1,4 +1,4 @@
-package com.fp.data.repository
+package com.fp.data
 
 import java.io.IOException
 

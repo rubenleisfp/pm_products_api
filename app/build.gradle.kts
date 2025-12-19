@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get() // Asegúrate de que
     //  id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
-    //alias(libs.plugins.ksp)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -45,6 +45,14 @@ android {
 }
 
 dependencies {
+    configurations.all {
+        // Excluir la versión antigua de las anotaciones
+        exclude(group = "com.intellij", module = "annotations")
+        // Forzar la versión definida en libs.versions.toml
+        resolutionStrategy {
+            force(libs.jetbrains.annotations)
+        }
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -55,17 +63,17 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.foundation)
+    //Navigation
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.runtime.ktx)
-
-    /*
-        implementation("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-        implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-        implementation("com.squareup.okhttp3:okhttp:4.11.0")
-        */
-    implementation(libs.androidx.compose.foundation)
-
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    // Compilador Room con KSP - Kotlin Symbol Processing
+    // (tecnología de procesamiento de anotaciones)
+    ksp(libs.room.compiler.ksp)
+    //Retrofit
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.core) // Accede a 'retrofit-core'
     implementation(libs.kotlinx.serialization.json) // Accede a 'kotlinx-serialization-json'

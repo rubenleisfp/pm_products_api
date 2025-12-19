@@ -48,7 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.fp.R
 import com.fp.Screen
-import com.fp.data.repository.Datasource
+import com.fp.data.Datasource
 import com.fp.model.Product
 import com.fp.model.ProductPageWrapper
 import com.fp.model.ProductWrapper

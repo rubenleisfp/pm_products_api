@@ -1,5 +1,10 @@
-package com.fp.data.repository
+package com.fp.data
 
+import android.content.Context
+import com.fp.data.repository.DatabaseFavoriteProductRepository
+import com.fp.data.repository.FavoriteProductRepository
+import com.fp.data.repository.NetworkProductsRepository
+import com.fp.data.repository.ProductsRepository
 import com.fp.network.ProductApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -10,9 +15,10 @@ import retrofit2.Retrofit
 
 interface AppContainer  {
     val productRepository: ProductsRepository
+    val favoriteProductRepository : FavoriteProductRepository
 }
 
-class DefaultAppContainer() : AppContainer {
+class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val BASE_URL =
         "https://dummyjson.com/"
@@ -33,5 +39,7 @@ class DefaultAppContainer() : AppContainer {
      */
     override val productRepository: ProductsRepository
         get() = NetworkProductsRepository(retrofitService)
+    override val favoriteProductRepository: FavoriteProductRepository
+        get() = DatabaseFavoriteProductRepository(ProductDatabase.getDatabase(context).itemDao())
 
 }

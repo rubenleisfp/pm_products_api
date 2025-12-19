@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get() // Asegúrate de que
     //  id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    //alias(libs.plugins.ksp)
 }
 
 android {

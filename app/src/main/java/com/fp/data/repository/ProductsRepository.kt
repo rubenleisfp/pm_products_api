@@ -22,6 +22,13 @@ interface ProductsRepository {
  * Network Implementation of Repository that fetch products from API
  */
 class NetworkProductsRepository( private val productApiService: ProductApiService) : ProductsRepository {
+    /**
+     * Fetches a list of products from the remote API, wraps them for UI state management,
+     * and returns the wrapped product page.
+     *
+     * @return A [ProductPageWrapper] containing the list of products and pagination details.
+     * @throws ApiException if the network request is not successful.
+     */
     override suspend fun getProducts(): ProductPageWrapper {
         val productsResponse : Response<ProductPage> = productApiService.getProducts()
         if (productsResponse.isSuccessful) {

@@ -6,13 +6,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.fp.Screen
-import com.fp.Screen.FrontPageScreen.route
 import com.fp.ui.frontpage.FrontPageScreen
 import com.fp.ui.store.StoreScreen
 import com.fp.ui.store.StoreViewModel
 
 /**
- * Created by Your name on 19/12/2025.
+ * Sets up the navigation graph for the application.
+ *
+ * This composable function is responsible for creating a `NavController`
+ * and configuring a `NavHost` with all the possible navigation routes. It defines
+ * the entry points for different screens like [FrontPageScreen] and [StoreScreen],
+ * and handles the navigation logic between them.
+ *
+ * The `startDestination` is set to the [FrontPageScreen].
  */
 @Composable
 fun NavigationStack() {

@@ -55,7 +55,12 @@ import com.fp.model.ProductWrapper
 import com.fp.ui.theme.Pm_products_apiTheme
 
 /**
- * Created by Your name on 16/09/2025.
+ * A composable function that serves as the main entry point for the store screen.
+ * It collects the UI state from the [storeViewModel] and displays the appropriate content,
+ * such as a list of products, a loading indicator, or an error message.
+ *
+ * @param navController The navigation controller for handling screen transitions.
+ * @param storeViewModel The ViewModel responsible for managing the store's state and business logic.
  */
 
 @Composable
@@ -64,6 +69,15 @@ fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel) {
     StoreGrid(navController, storeState = productState,  onClick = { storeViewModel.onDetailSelected(it) })
 }
 
+/**
+ * A composable function that displays the main screen of the store, including a top app bar and a grid of products.
+ * It observes the [storeState] to determine what to display: a list of products, an error message, or a loading indicator.
+ *
+ * @param navController The navigation controller used for navigating between screens.
+ * @param storeState The current state of the store's UI, containing product data and the current action (e.g., READ, ERROR).
+ * @param onClick A lambda function to be invoked when a product item's expand/collapse button is clicked. It passes the product's ID.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifier = Modifier) {
 
@@ -96,6 +110,15 @@ fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int
     }
 }
 
+/**
+ * A composable function that displays a vertically scrollable list of products.
+ * It uses a [LazyColumn] for efficient rendering of the list, creating and composing
+ * only the items that are currently visible on screen. Each item in the list is a [ProductItem].
+ *
+ * @param productWrapperList The list of [ProductWrapper] objects to be displayed.
+ * @param onClick A lambda function to be invoked when the expand/collapse button of a [ProductItem] is clicked. It passes the product's ID.
+ * @param modifier The modifier to be applied to the [LazyColumn].
+ */
 @Composable
 fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     LazyColumn(modifier = modifier) {
@@ -110,6 +133,14 @@ fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit
 }
 
 
+/**
+ * A composable function that creates a centered top app bar for the store screen.
+ * It displays the app's logo and name. The logo is clickable and navigates
+ * to the front page screen when tapped.
+ *
+ * @param navController The navigation controller used for handling screen transitions.
+ * @param modifier The modifier to be applied to the top app bar.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
@@ -136,22 +167,11 @@ fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
 }
 
 
-@Composable
-fun IsLoading() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier
-                .size(dimensionResource(id = R.dimen.image_size_large)),
-            painter = painterResource(R.drawable.loading),
-            contentDescription = null
-        )
-
-     }
-}
-
+/**
+ * A composable function that displays a full-screen error message.
+ * This screen is shown when the data fetching fails. It has a distinct background color
+ * to indicate an error state and presents a user-friendly error text.
+ */
 @Composable
 fun ErrorScreen() {
     Box(
@@ -171,11 +191,21 @@ fun ErrorScreen() {
             )
         }
     }
-
-
 }
 
 
+/**
+ * A composable function that displays a single product item in a card layout.
+ * It shows the product's basic information (icon, name, price) and an expand/collapse button.
+ * When expanded, it reveals more details about the product, such as its description and stock level,
+ * and also displays a button to share the product recommendation via email.
+ *
+ * The card's content animates its size when expanding or collapsing.
+ *
+ * @param productWrapper The [ProductWrapper] object containing the product data and its expanded state.
+ * @param onClick A lambda function that is invoked when the expand/collapse button is clicked. It passes the product's ID.
+ * @param modifier The modifier to be applied to the [Card].
+ */
 @Composable
 fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier: Modifier = Modifier ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
@@ -217,6 +247,14 @@ fun ProductItem(productWrapper: ProductWrapper, onClick: (Int) -> Unit, modifier
     }
 }
 
+/**
+ * A composable function that displays the detailed information of a product,
+ * including its description and stock level. This component is typically shown
+ * when a product item is expanded.
+ *
+ * @param productWrapper The [ProductWrapper] containing the product's data to be displayed.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun ProductDetails(
     productWrapper: ProductWrapper,
@@ -288,6 +326,14 @@ fun EnviarEmail() {
 }
 
 
+/**
+ * A composable function that displays a product's thumbnail image.
+ * It uses Coil's `AsyncImage` to load the image from a URL asynchronously.
+ * The image is styled with a specific size, padding, and clipped to a small shape.
+ *
+ * @param thumbnail The URL string of the product's thumbnail image.
+ * @param modifier The modifier to be applied to the image.
+ */
 @Composable
 fun ProductIcon(
     thumbnail: String,
@@ -306,6 +352,13 @@ fun ProductIcon(
 
 
 
+/**
+ * A composable function that displays key information about a product,
+ * specifically its title and price.
+ *
+ * @param product The [Product] object containing the data to be displayed.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {

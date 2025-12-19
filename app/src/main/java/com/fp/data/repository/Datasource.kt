@@ -5,10 +5,9 @@ import com.fp.model.ProductWrapper
 
 /**
  * [Datasource] generates a list of [Product]
+ *
+ * Dummy class with hardcoded products. Useful for testing and previews
  */
-
-
-//https://dummyjson.com/products?limit=30&skip=0&select=title,description,category,price,rating,stock,thumbnail
 class Datasource() {
 
 

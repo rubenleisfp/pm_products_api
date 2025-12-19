@@ -27,10 +27,17 @@ class StoreViewModel(private val productRepository: ProductsRepository) : ViewMo
 
     private val LOG_TAG = "ProductViewModel"
 
+    /**
+     * Asynchronously loads product data from the repository.
+     *
+     * This function initiates a coroutine in the `viewModelScope` to fetch products.
+     * On successful retrieval, it updates the UI state (`_uiState`) with the new product data
+     * and sets the action to `READ`. If an exception occurs during the fetch operation,
+     * it updates the UI state to reflect an `ERROR` action and logs the exception.
+     */
     fun loadProducts() {
         Log.i(LOG_TAG, "Loading products")
         viewModelScope.launch {
-            //_uiState.value = _uiState.value.copy (action = ActionEnum.IS_LOADING)
             try {
                 val productPageWrapper : ProductPageWrapper = productRepository.getProducts()
                 _uiState.value = _uiState.value.copy(productPageWrapper = productPageWrapper, action = ActionEnum.READ)
@@ -56,6 +63,13 @@ class StoreViewModel(private val productRepository: ProductsRepository) : ViewMo
     }
 
 
+    /**
+     * Updates the UI state to toggle the expanded state of a specific product.
+     * When a product is selected, this function finds it in the current list
+     * and inverts its `expanded` property, causing the UI to show or hide its details.
+     *
+     * @param productId The unique identifier of the product to be expanded or collapsed.
+     */
     fun onDetailSelected(productId: Int) {
         _uiState.update { currentState ->
             val updatedProductWrapperList = currentState.productPageWrapper.productsWrapper.map { productWrapper ->

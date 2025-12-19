@@ -27,11 +27,16 @@ import com.fp.R
 import com.fp.Screen
 
 /**
- * Created by Your name on 19/12/2025.
+ * A composable function that represents the front page or welcome screen of the application.
+ *
+ * This screen displays the application's logo, name, and a button that navigates
+ * to the main store screen. It serves as the entry point for the user to start browsing.
+ *
+ * @param navController The [NavController] used for handling navigation actions,
+ *                      specifically to navigate to the `StoreScreen`.
  */
 @Composable
 fun FrontPageScreen(navController: NavController) {
-    //Haz una pagina de inicio que tenga una portada para mi app, con un texto y una imagen clickable
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(

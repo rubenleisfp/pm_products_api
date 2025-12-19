@@ -31,11 +31,6 @@ class DefaultAppContainer() : AppContainer {
      * The custom getter ensures a new instance of the repository is provided
      * every time it's accessed, injecting the retrofit service.
      */
-    // 👇 ESTA ES LA LÍNEA CORREGIDA 👇
-// Usando by lazy (también correcto y a menudo preferido)
-//    override val productsRepository: ProductsRepository by lazy {
-//        NetworkProductsRepository(retrofitService)
-//    }
     override val productRepository: ProductsRepository
         get() = NetworkProductsRepository(retrofitService)
 

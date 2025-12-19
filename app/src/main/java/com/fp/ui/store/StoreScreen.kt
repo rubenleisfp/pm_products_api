@@ -6,6 +6,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,13 +24,11 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,10 +43,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.fp.R
+import com.fp.Screen
 import com.fp.data.repository.Datasource
 import com.fp.model.Product
+import com.fp.model.ProductPageWrapper
 import com.fp.model.ProductWrapper
 import com.fp.ui.theme.Pm_products_apiTheme
 
@@ -56,24 +59,21 @@ import com.fp.ui.theme.Pm_products_apiTheme
  */
 
 @Composable
-fun StoreApp(storeViewModel: StoreViewModel) {
+fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel) {
     val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(storeState = productState,  onClick = { storeViewModel.onDetailSelected(it) })
+    StoreGrid(navController, storeState = productState,  onClick = { storeViewModel.onDetailSelected(it) })
 }
 
 @Composable
-fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifier = Modifier) {
+fun StoreGrid(navController: NavController,storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifier = Modifier) {
 
     Scaffold(
         topBar = {
-            StoreTopAppBar()
+            StoreTopAppBar(navController=navController)
         }
     ) { innerPadding ->
 
         when (storeState.action) {
-            ActionEnum.IS_LOADING ->
-                IsLoading()
-
             ActionEnum.ERROR -> ErrorScreen()
 
             ActionEnum.READ ->
@@ -82,14 +82,16 @@ fun StoreGrid(storeState: StoreState, onClick: (Int) -> Unit, modifier : Modifie
                         .padding(innerPadding),
                     verticalArrangement = Arrangement.spacedBy(36.dp)
                 ) {
+
                     ProductList(
                         productWrapperList = storeState.productPageWrapper.productsWrapper,
                         onClick = onClick,
                         modifier = modifier
                     )
+
                 }
 
-
+            ActionEnum.IS_LOADING -> TODO() //DO NOTHING
         }
     }
 }
@@ -110,16 +112,18 @@ fun ProductList(productWrapperList: List<ProductWrapper>, onClick: (Int) -> Unit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StoreTopAppBar(modifier: Modifier = Modifier) {
+fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.image_size))
-                        .padding(dimensionResource(id = R.dimen.padding_small)),
+                        .padding(dimensionResource(id = R.dimen.padding_small))
+                        .clickable(onClick = {navController.navigate(Screen.FrontPageScreen.route)}),
                     painter = painterResource(R.drawable.store),
-                    contentDescription = null
+                    contentDescription = null,
+
                 )
                 Text(
                     text = stringResource(R.string.app_name),
@@ -354,7 +358,28 @@ fun ProductItemPreview() {
 fun StoreTopAppBarPreview() {
 
     Pm_products_apiTheme {
-        StoreTopAppBar()
+        StoreTopAppBar(navController = rememberNavController())
     }
 }
 
+
+@Preview(showBackground = true)
+@Composable
+fun StoreGridPreview() {
+    val storeState = StoreState(
+        action = ActionEnum.READ,
+        productPageWrapper = ProductPageWrapper(
+            productsWrapper = Datasource().loadProductsWrapper(),
+            total = 10,
+            skip = 0,
+            limit = 10
+        )
+    )
+    Pm_products_apiTheme {
+        StoreGrid(
+            navController = rememberNavController(),
+            storeState = storeState,
+            onClick = {}
+        )
+    }
+    }

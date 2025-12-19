@@ -1,6 +1,13 @@
 # PM Products API - Descripción Técnica
 
-Este documento detalla la arquitectura técnica y el funcionamiento interno de la aplicación `pm_products_api`. La app está diseñada para obtener y mostrar una lista de productos desde una API pública (`https://dummyjson.com/`), siguiendo las directrices de arquitectura moderna de Android recomendadas por Google.
+En esta rama se llama al API dummyjson/products [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products).
+Hay capa de repositorio e inyeccion de dependencias.
+Existe una pequeña navegacion, donde la aplicacion muestra una ventana inicial con una portada.
+Al pulsar sobre el boton de la portada, navegaremos a la ventana StoreScree, donde se muestra la lista de productos.
+Desde la lista de productos podemos volver a la portada pulsando sobre el boton del TopBar.
+
+Este documento detalla la arquitectura técnica y el funcionamiento interno de la aplicación `pm_products_api`. 
+La app está diseñada para obtener y mostrar una lista de productos desde una API pública (`https://dummyjson.com/`), siguiendo las directrices de arquitectura moderna de Android recomendadas por Google.
 
 ## Arquitectura General
 

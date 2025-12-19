@@ -30,7 +30,7 @@ class StoreViewModel(private val productRepository: ProductsRepository) : ViewMo
     fun loadProducts() {
         Log.i(LOG_TAG, "Loading products")
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy (action = ActionEnum.IS_LOADING)
+            //_uiState.value = _uiState.value.copy (action = ActionEnum.IS_LOADING)
             try {
                 val productPageWrapper : ProductPageWrapper = productRepository.getProducts()
                 _uiState.value = _uiState.value.copy(productPageWrapper = productPageWrapper, action = ActionEnum.READ)

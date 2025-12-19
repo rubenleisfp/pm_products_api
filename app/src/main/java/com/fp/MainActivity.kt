@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.fp.ui.store.StoreApp
+import com.fp.ui.NavigationStack
+import com.fp.ui.store.StoreScreen
 import com.fp.ui.store.StoreViewModel
 import com.fp.ui.theme.Pm_products_apiTheme
+
 
 class MainActivity : ComponentActivity() {
 
@@ -24,10 +26,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    val storeViewModel: StoreViewModel =
-                        viewModel(factory = StoreViewModel.Factory)
-                    storeViewModel.loadProducts()
-                    StoreApp(storeViewModel)
+                    NavigationStack()
                 }
             }
         }

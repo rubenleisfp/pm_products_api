@@ -1,8 +1,11 @@
 # PM Products API - Descripción Técnica
 
 En esta rama se llama al API dummyjson/products [https://dummyjson.com/docs/products](https://dummyjson.com/docs/products).
+
 Hay capa de repositorio e inyeccion de dependencias.
+
 Existe una pequeña navegacion, donde la aplicacion muestra una ventana inicial con una portada.
+
 Al pulsar sobre el boton de la portada, navegaremos a la ventana StoreScree, donde se muestra la lista de productos.
 Desde la lista de productos podemos volver a la portada pulsando sobre el boton del TopBar.
 

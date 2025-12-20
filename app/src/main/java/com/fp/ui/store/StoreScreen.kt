@@ -1,6 +1,6 @@
 package com.fp.ui.store
 
-import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -65,9 +66,17 @@ import com.fp.ui.theme.Pm_products_apiTheme
  */
 
 @Composable
-fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel, favoriteViewModel: FavoriteViewModel) {
+fun StoreScreen(
+    navController: NavController,
+    storeViewModel: StoreViewModel,
+    favoriteViewModel: FavoriteViewModel
+) {
     val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(navController, storeState = productState,  onExpand = { storeViewModel.onDetailSelected(it) }, onClickAddFavorite = {favoriteViewModel.addFavoriteProduct(it)})
+    StoreGrid(
+        navController,
+        storeState = productState,
+        onExpand = { storeViewModel.onDetailSelected(it) },
+        onClickAddFavorite = { favoriteViewModel.addFavoriteProduct(it) })
 }
 
 /**
@@ -80,11 +89,17 @@ fun StoreScreen(navController: NavController, storeViewModel: StoreViewModel, fa
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
-fun StoreGrid(navController: NavController,storeState: StoreState, onExpand: (Int) -> Unit,  onClickAddFavorite: (Product) -> Unit, modifier : Modifier = Modifier) {
+fun StoreGrid(
+    navController: NavController,
+    storeState: StoreState,
+    onExpand: (Int) -> Unit,
+    onClickAddFavorite: (Product) -> Unit,
+    modifier: Modifier = Modifier
+) {
 
     Scaffold(
         topBar = {
-            StoreTopAppBar(navController=navController)
+            StoreTopAppBar(title = stringResource(R.string.app_name), navController = navController)
         }
     ) { innerPadding ->
 
@@ -123,7 +138,12 @@ fun StoreGrid(navController: NavController,storeState: StoreState, onExpand: (In
  * @param modifier The modifier to be applied to the `LazyColumn`.
  */
 @Composable
-fun ProductList(productWrapperList: List<ProductWrapper>, onExpand: (Int) -> Unit,  onClickAddFavorite: (Product) -> Unit, modifier: Modifier = Modifier) {
+fun ProductList(
+    productWrapperList: List<ProductWrapper>,
+    onExpand: (Int) -> Unit,
+    onClickAddFavorite: (Product) -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(productWrapperList) { index, productWrapper ->
             ProductItem(
@@ -147,7 +167,7 @@ fun ProductList(productWrapperList: List<ProductWrapper>, onExpand: (Int) -> Uni
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
+fun StoreTopAppBar(title: String, navController: NavController, modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -155,28 +175,42 @@ fun StoreTopAppBar(navController: NavController,modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(dimensionResource(id = R.dimen.image_size))
                         .padding(dimensionResource(id = R.dimen.padding_small))
-                        .clickable(onClick = {navController.navigate(Screen.FrontPageScreen.route)}),
+                        .clickable(onClick = { navController.navigate(Screen.StoreScreen.route) }),
                     painter = painterResource(R.drawable.store),
                     contentDescription = null,
 
-                )
+                    )
                 Text(
-                    text = stringResource(R.string.app_name),
+                    text = title,
                     style = MaterialTheme.typography.displayLarge
                 )
 
-                    Image(
-                        modifier = Modifier
-                            .size(dimensionResource(id = R.dimen.image_size))
-                            .padding(dimensionResource(id = R.dimen.padding_small))
-                            .clickable(onClick = {}),  // Agrega lógica para manejar el clic en el cesto de la compra
-                        painter = painterResource(id = R.drawable.shopping_cart),
-                        contentDescription = stringResource(id = R.string.descripcion)
+//                Image(
+//                    modifier = Modifier
+//                        .size(dimensionResource(id = R.dimen.image_size))
+//                        .padding(dimensionResource(id = R.dimen.padding_small))
+//                        .clickable(onClick = { navController.navigate(Screen.FavoriteScreen.route) }),
+//                    painter = painterResource(id = R.drawable.favorite),
+//                    contentDescription = stringResource(id = R.string.descripcion)
+//                )
+
+                IconButton(
+                    onClick = { navController.navigate(Screen.FavoriteScreen.route) },
+                    modifier = modifier
+                ) {
+                    Icon(
+                        // Elige el icono basándote en el estado `isFavorite`
+                        imageVector = Icons.Filled.Favorite,
+                        // Cambia el tamaño para darle más énfasis
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = stringResource(R.string.add_to_favorites_description), // Añade una descripción de accesibilidad
+                        modifier = Modifier.size(100.dp)
                     )
+                }
+
 
             }
-        },
-        modifier = modifier
+        }
     )
 }
 
@@ -208,7 +242,6 @@ fun ErrorScreen() {
 }
 
 
-
 /**
  * A composable function that displays a single product item within a card.
  * This item includes the product's basic information, an icon, and a button to
@@ -222,15 +255,22 @@ fun ErrorScreen() {
  * @param modifier The modifier to be applied to the card layout.
  */
 @Composable
-fun ProductItem(productWrapper: ProductWrapper, onExpand: (Int) -> Unit, onClickAddFavorite: (Product) -> Unit, modifier: Modifier = Modifier ) {
+fun ProductItem(
+    productWrapper: ProductWrapper,
+    onExpand: (Int) -> Unit,
+    onClickAddFavorite: (Product) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
-        Column(   modifier = Modifier
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessMedium
+        Column(
+            modifier = Modifier
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
                 )
-            )) {
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -279,7 +319,7 @@ fun ProductDetails(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.descripcion),
+            text = stringResource(R.string.description),
             style = MaterialTheme.typography.labelMedium
         )
         Text(
@@ -325,27 +365,12 @@ private fun ProductItemButton(
 
 @Composable
 fun AddFavorite(onClickAddFavorite: (Product) -> Unit, productWrapper: ProductWrapper) {
+    val mContext = LocalContext.current
     Button(onClick = {
         onClickAddFavorite(productWrapper.product)
+        Toast.makeText(mContext, R.string.product_added_to_favorites, Toast.LENGTH_SHORT).show()
     }) {
         Text(stringResource(R.string.add_favorite))
-    }
-}
-
-@Composable
-fun EnviarEmail() {
-    val context = LocalContext.current
-
-    Button(onClick = {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "message/rfc822"
-            putExtra(Intent.EXTRA_SUBJECT, "Recomendación de producto")
-            putExtra(Intent.EXTRA_TEXT, "Te recomiendo comprar esto.")
-            // putExtra(Intent.EXTRA_STREAM, uriDeLaImagen) // si quieres adjuntar multimedia
-        }
-        context.startActivity(Intent.createChooser(intent, "Enviar recomendacion"))
-    }) {
-        Text(stringResource(R.string.enviar_recomendacion))
     }
 }
 
@@ -362,7 +387,7 @@ fun EnviarEmail() {
 fun ProductIcon(
     thumbnail: String,
     modifier: Modifier = Modifier
-)  {
+) {
     AsyncImage(
         model = thumbnail,
         modifier = modifier
@@ -373,7 +398,6 @@ fun ProductIcon(
         contentDescription = "Imagen del producto"
     )
 }
-
 
 
 /**
@@ -392,7 +416,7 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(
-            text = stringResource(R.string.precio) + product.price + " €",
+            text = stringResource(R.string.price) + product.price + " €",
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -435,7 +459,7 @@ fun ProductItemPreview() {
 fun StoreTopAppBarPreview() {
 
     Pm_products_apiTheme {
-        StoreTopAppBar(navController = rememberNavController())
+        StoreTopAppBar(title = "Store", navController = rememberNavController())
     }
 }
 
@@ -460,4 +484,4 @@ fun StoreGridPreview() {
             onClickAddFavorite = {}
         )
     }
-    }
+}

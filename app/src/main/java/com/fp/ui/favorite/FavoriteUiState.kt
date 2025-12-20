@@ -3,7 +3,9 @@ package com.fp.ui.favorite
 import com.fp.data.FavoriteProduct
 
 /**
- * Created by Your name on 16/09/2025.
+ * Represents the UI state for the favorite products screen.
+ *
+ * @param favoriteProductList The list of favorite products to be displayed. Defaults to an empty list.
  */
 data class FavoriteUiState(
     val favoriteProductList: List<FavoriteProduct> = emptyList(),

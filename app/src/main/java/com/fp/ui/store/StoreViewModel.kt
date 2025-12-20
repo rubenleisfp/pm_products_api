@@ -55,10 +55,6 @@ class StoreViewModel(
         }
     }
 
-
-
-
-
     /**
      * Updates the UI state to toggle the expanded state of a specific product.
      * When a product is selected, this function finds it in the current list
@@ -87,10 +83,7 @@ class StoreViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as ProductApplication)
                 val productRepository = application.container.productRepository
-
-
-                val favoriteProductRepository = application.container.favoriteProductRepository
-                StoreViewModel(productRepository = productRepository,)
+                StoreViewModel(productRepository = productRepository)
             }
         }
     }

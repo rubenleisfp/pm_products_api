@@ -3,7 +3,10 @@ package com.fp.ui.store
 import com.fp.model.ProductPageWrapper
 
 /**
- * Created by Your name on 16/09/2025.
+ * Represents the state of the store UI.
+ *
+ * @property productPageWrapper The wrapper containing the current page of products and pagination details.
+ * @property action The last user action performed, used to manage UI behavior (e.g., scrolling).
  */
 data class StoreState(
     val productPageWrapper: ProductPageWrapper = ProductPageWrapper(emptyList(), 0, 0, 0),

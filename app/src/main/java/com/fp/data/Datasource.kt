@@ -9,7 +9,12 @@ import com.fp.model.ProductWrapper
  * Dummy class with hardcoded products. Useful for testing and previews
  */
 class Datasource() {
-
+    fun loadFavorites(): List<FavoriteProduct> {
+        return listOf<FavoriteProduct>(
+            FavoriteProduct(1, "Boli", 3.12),
+            FavoriteProduct(2, "Lapiz", 2.0)
+        )
+    }
 
     fun loadProductsWrapper(): List<ProductWrapper> {
         val productsWrapperList = Datasource().loadProducts().mapIndexed { index, product ->

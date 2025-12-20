@@ -1,10 +1,13 @@
 package com.fp
 
 /**
- * Created by Your name on 19/12/2025.
+ * Represents a sealed class for defining navigation routes within the application.
+ * Each object inheriting from [Screen] corresponds to a specific screen and holds its unique route string.
+ *
+ * @param route The unique identifier for the navigation route.
  */
 sealed class Screen(val route: String) {
-    //Definimos primero las rutas de las pantallas
     object FrontPageScreen: Screen("front_page_screen")
     object StoreScreen: Screen("store_screen")
+    object FavoriteScreen: Screen("favorite_screen")
 }

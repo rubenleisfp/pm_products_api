@@ -30,6 +30,16 @@ class FavoriteViewModel(
 
     private val LOG_TAG = "ProductViewModel"
 
+    /**
+     * Adds a product to the user's favorites.
+     *
+     * This function converts a [Product] object into a [FavoriteProduct] and then
+     * inserts it into the favorite product repository. The operation is performed
+     * asynchronously within a `viewModelScope` coroutine. Any exceptions during
+     * the database insertion are caught and logged.
+     *
+     * @param product The [Product] to be added to favorites.
+     */
     fun addFavoriteProduct(product: Product) {
         Log.i(LOG_TAG, "Add Favorite Product")
         viewModelScope.launch {
@@ -37,6 +47,28 @@ class FavoriteViewModel(
                 val favoriteProduct : FavoriteProduct = convertToFavoriteProduct(product)
                 favoriteProductRepository.insertFavorite(favoriteProduct)
                 Log.i(LOG_TAG, "Add favorite was Ok")
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Exception: $e")
+            }
+        }
+    }
+
+    /**
+     * Deletes a product from the user's favorites.
+     *
+     * This function takes a [FavoriteProduct] object and requests its deletion from
+     * the favorite product repository. The operation is performed asynchronously
+     * within a `viewModelScope` coroutine. Any exceptions during the database
+     * deletion are caught and logged.
+     *
+     * @param favoriteProduct The [FavoriteProduct] to be removed from favorites.
+     */
+    fun deleteFavoriteProduct(favoriteProduct:FavoriteProduct) {
+        Log.i(LOG_TAG, "Deleted Favorite Product")
+        viewModelScope.launch {
+            try {
+                favoriteProductRepository.deleteFavorite(favoriteProduct)
+                Log.i(LOG_TAG, "Deleted favorite was Ok")
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Exception: $e")
             }

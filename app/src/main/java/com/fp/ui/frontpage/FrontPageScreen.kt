@@ -58,10 +58,7 @@ fun FrontPageScreen(navController: NavController) {
             }
         }
     }
-
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

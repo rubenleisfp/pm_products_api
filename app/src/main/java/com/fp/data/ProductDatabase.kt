@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-
 @Database(entities = [FavoriteProduct::class], version = 1, exportSchema = false)
 abstract class ProductDatabase : RoomDatabase() {
 
@@ -16,9 +15,9 @@ abstract class ProductDatabase : RoomDatabase() {
         private var Instance: ProductDatabase? = null
 
         fun getDatabase(context: Context): ProductDatabase {
-            // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, ProductDatabase::class.java, "product_database")
+                    .fallbackToDestructiveMigration(true)
                     .build()
                     .also { Instance = it }
             }

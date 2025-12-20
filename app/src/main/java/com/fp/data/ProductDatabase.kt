@@ -17,7 +17,7 @@ abstract class ProductDatabase : RoomDatabase() {
         fun getDatabase(context: Context): ProductDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, ProductDatabase::class.java, "product_database")
-                    .fallbackToDestructiveMigration(true)
+                    //.fallbackToDestructiveMigration(true)
                     .build()
                     .also { Instance = it }
             }

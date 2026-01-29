@@ -1,5 +1,11 @@
 # PM Products API - Descripción Técnica
 
+# Rama
+En esta rama se invoca el API Rest con inyección de dependencias. Se colapsa el el detalle del producto permitiendo expandirlo para ver más
+información.
+También tenemos una pantalla de navegación que permite movernos entre la página principal, el listado de productos y favoritos.
+Permite guardar en favoritos desde la pantalla de productos y el borrado de favoritos desde la pantalla de favs
+
 Este documento detalla la arquitectura técnica y el funcionamiento interno de la aplicación `pm_products_api`. 
 La app consume la API pública de `dummyjson` para obtener y mostrar una lista de productos, permitiendo al usuario marcarlos como favoritos
 en una base de datos.

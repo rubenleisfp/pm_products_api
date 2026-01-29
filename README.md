@@ -1,5 +1,9 @@
 # PM Products API - Rama MVI
 
+# Rama
+En esta rama se invoca el API Rest con inyección de dependencias. Se colapsa el el detalle del producto permitiendo expandirlo para ver más
+información.
+
 En esta rama se muestran una serie de productos en una lista, con la posibilidad de expandir cada producto para ver sus detalles.
 Los producto se extraen de un API REST.
 

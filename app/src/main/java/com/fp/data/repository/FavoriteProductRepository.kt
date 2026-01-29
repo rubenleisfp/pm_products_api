@@ -38,6 +38,14 @@ interface FavoriteProductRepository {
      */
     suspend fun deleteFavorite(favoriteProduct: FavoriteProduct)
 
+    /**
+     * Deletes a favorite product from the data source by its ID.
+     * This is a suspend function, designed to be called from a coroutine scope.
+     *
+     * @param id The ID of the [FavoriteProduct] to be deleted.
+     */
+    suspend fun deleteFavoriteById(id: Int)
+
 
 }
 
@@ -52,5 +60,9 @@ class DatabaseFavoriteProductRepository(private val favoriteProductDao: Favorite
 
     override suspend fun deleteFavorite(favoriteProduct: FavoriteProduct) {
         favoriteProductDao.delete(favoriteProduct)
+    }
+
+    override suspend fun deleteFavoriteById(id: Int) {
+        favoriteProductDao.deleteFavoriteById(id)
     }
 }

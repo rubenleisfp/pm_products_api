@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get() // Asegúrate de que
-    //  id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
     alias(libs.plugins.ksp)
 }
 
@@ -45,6 +44,7 @@ android {
 }
 
 dependencies {
+    /*
     configurations.all {
         // Excluir la versión antigua de las anotaciones
         exclude(group = "com.intellij", module = "annotations")
@@ -52,7 +52,7 @@ dependencies {
         resolutionStrategy {
             force(libs.jetbrains.annotations)
         }
-    }
+    }*/
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

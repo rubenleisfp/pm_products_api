@@ -12,6 +12,7 @@ import com.fp.data.FavoriteProduct
 import com.fp.data.repository.FavoriteProductRepository
 import com.fp.data.repository.ProductsRepository
 import com.fp.model.Product
+import com.fp.model.ProductWrapper
 import com.fp.ui.store.ActionEnum
 import com.fp.ui.store.StoreViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,6 +31,16 @@ class FavoriteViewModel(
 
     private val LOG_TAG = "ProductViewModel"
 
+    val uiState: StateFlow<FavoriteUiState> =
+        favoriteProductRepository.getAllFavoritesStream().filterNotNull()
+            .map {
+                FavoriteUiState(it)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+                initialValue = FavoriteUiState()
+            )
+
     /**
      * Adds a product to the user's favorites.
      *
@@ -46,7 +57,8 @@ class FavoriteViewModel(
             try {
                 val favoriteProduct : FavoriteProduct = convertToFavoriteProduct(product)
                 favoriteProductRepository.insertFavorite(favoriteProduct)
-                Log.i(LOG_TAG, "Add favorite was Ok")
+
+                Log.i(LOG_TAG, "Add favorite $favoriteProduct was Ok")
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Exception: $e")
             }
@@ -68,22 +80,38 @@ class FavoriteViewModel(
         viewModelScope.launch {
             try {
                 favoriteProductRepository.deleteFavorite(favoriteProduct)
-                Log.i(LOG_TAG, "Deleted favorite was Ok")
+                Log.i(LOG_TAG, "Deleted favorite $favoriteProduct was Ok")
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "Exception: $e")
             }
         }
     }
 
-    val uiState: StateFlow<FavoriteUiState> =
-        favoriteProductRepository.getAllFavoritesStream().filterNotNull()
-            .map {
-                FavoriteUiState(it)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = FavoriteUiState()
-            )
+    fun deleteFavoriteProductById(id:Int) {
+        Log.i(LOG_TAG, "Deleted Favorite Product By Id")
+        viewModelScope.launch {
+            try {
+                favoriteProductRepository.deleteFavoriteById(id)
+                Log.i(LOG_TAG, "Deleted favorite by id $id was Ok")
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "Exception: $e")
+            }
+        }
+    }
+
+
+
+
+    /**
+     * Finds if the product was added to favorit lis
+     */
+    fun isFavoriteProduct(productWrapper: ProductWrapper): Boolean {
+
+        val isFavorite = uiState.value.favoriteProductList.find { it.id == productWrapper.id } != null
+        Log.i(LOG_TAG, "productWrapper ${productWrapper}")
+        Log.i(LOG_TAG, "isFavoriteProduct $isFavorite")
+        return isFavorite
+    }
 
 
     private fun convertToFavoriteProduct(product: Product): FavoriteProduct {
@@ -93,6 +121,7 @@ class FavoriteViewModel(
             price = product.price
         )
     }
+
 
     /**
      * Factory for [StoreViewModel] that takes repository as a dependency

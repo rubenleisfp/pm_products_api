@@ -46,7 +46,7 @@ class NetworkProductsRepository( private val productApiService: ProductApiServic
     private fun getWrapper(productPage: ProductPage): ProductPageWrapper {
 
         val productsWrapperList = productPage.products.mapIndexed { index, product ->
-            ProductWrapper(product = product, id = index, expanded = false)
+            ProductWrapper(product = product, id = product.id, expanded = false)
         }
         var productPageWrapper = ProductPageWrapper(
             productsWrapperList,

@@ -4,6 +4,7 @@
     <string name="error_message">Error al cargar los productos</string>
     <string name="price">Precio  €</string>
     <string name="add_favorite">Agregar a favoritos</string>
+    <string name="remove_favorite">Eliminar de favoritos</string>
     <string name="description">Descripción:</string>
     <string name="stock">Stock:</string>
     <string name="expand_button_content_description">Más</string>
@@ -11,4 +12,5 @@
     <string name="shopping_bag_description">Carrito de compra\n</string>
     <string name="add_to_favorites_description">Favoritos</string>
     <string name="product_added_to_favorites">Agregado a favoritos\n</string>
+    <string name="product_removed_from_favorites">Eliminado de favoritos\n</string>
 </resources>

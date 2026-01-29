@@ -76,7 +76,10 @@ fun StoreScreen(
         navController,
         storeState = productState,
         onExpand = { storeViewModel.onDetailSelected(it) },
-        onClickAddFavorite = { favoriteViewModel.addFavoriteProduct(it) })
+        isFavoriteProduct = { favoriteViewModel.isFavoriteProduct(it) },
+        onClickAddFavorite = { favoriteViewModel.addFavoriteProduct(it) },
+        onClickRemoveFavorite = { favoriteViewModel.deleteFavoriteProductById(it.id) })
+
 }
 
 /**
@@ -86,6 +89,8 @@ fun StoreScreen(
  * @param navController The navigation controller used for navigating between screens.
  * @param storeState The current state of the store's UI, containing product data and the current action (e.g., READ, ERROR).
  * @param onExpand A lambda function to be invoked when a product item's expand/collapse button is clicked. It passes the product's ID.
+ * @param onClickAddFavorite A lambda function to be invoked when a product item's add favorite button is clicked. It passes the [Product] object.
+ * @param onClickRemoveFavorite A lambda function to be invoked when a product item's remove favorite button is clicked. It passes the product's ID.
  * @param modifier The modifier to be applied to the layout.
  */
 @Composable
@@ -93,7 +98,9 @@ fun StoreGrid(
     navController: NavController,
     storeState: StoreState,
     onExpand: (Int) -> Unit,
+    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
+    onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -116,7 +123,9 @@ fun StoreGrid(
                     ProductList(
                         productWrapperList = storeState.productPageWrapper.productsWrapper,
                         onExpand = onExpand,
+                        isFavoriteProduct = isFavoriteProduct,
                         onClickAddFavorite = onClickAddFavorite,
+                        onClickRemoveFavorite = onClickRemoveFavorite,
                         modifier = modifier,
                     )
 
@@ -135,13 +144,16 @@ fun StoreGrid(
  * @param productWrapperList A list of `ProductWrapper` objects, where each item contains the product data and its UI state (e.g., expanded).
  * @param onExpand A lambda function to be invoked when a product's expand/collapse button is clicked. It passes the product's ID.
  * @param onClickAddFavorite A lambda function to be invoked when the "Add to Favorite" button is clicked for a product. It passes the [Product] object.
+ * @param onClickRemoveFavorite A lambda function to be invoked when the "Remove from Favorite" button is clicked for a product. It passes the [Product] object.
  * @param modifier The modifier to be applied to the `LazyColumn`.
  */
 @Composable
 fun ProductList(
     productWrapperList: List<ProductWrapper>,
     onExpand: (Int) -> Unit,
+    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
+    onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -149,7 +161,9 @@ fun ProductList(
             ProductItem(
                 productWrapper = productWrapper,
                 onExpand = onExpand,
+                isFavoriteProduct = isFavoriteProduct,
                 onClickAddFavorite = onClickAddFavorite,
+                onClickRemoveFavorite = onClickRemoveFavorite,
                 modifier = modifier
             )
         }
@@ -252,13 +266,16 @@ fun ErrorScreen() {
  * @param productWrapper The [ProductWrapper] containing the product's data and its expanded state.
  * @param onExpand A lambda function to be invoked when the expand/collapse button is clicked, passing the product's ID.
  * @param onClickAddFavorite A lambda function to be invoked when the "Add to Favorite" button is clicked, passing the [Product] object.
+ * @param onClickRemoveFavorite A lambda function to be invoked when the "Remove from Favorite" button is clicked, passing the [Product] object.
  * @param modifier The modifier to be applied to the card layout.
  */
 @Composable
 fun ProductItem(
     productWrapper: ProductWrapper,
     onExpand: (Int) -> Unit,
+    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
+    onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
@@ -296,7 +313,11 @@ fun ProductItem(
                     )
                 )
             }
-            AddFavorite(onClickAddFavorite, productWrapper)
+            if (isFavoriteProduct(productWrapper)) {
+                RemoveFavorite(onClickRemoveFavorite, productWrapper)
+            } else {
+                AddFavorite(onClickAddFavorite, productWrapper)
+            }
 
         }
     }
@@ -374,6 +395,17 @@ fun AddFavorite(onClickAddFavorite: (Product) -> Unit, productWrapper: ProductWr
     }
 }
 
+@Composable
+fun RemoveFavorite(onClickRemoveFavorite: (Product) -> Unit, productWrapper: ProductWrapper) {
+    val mContext = LocalContext.current
+    Button(onClick = {
+        onClickRemoveFavorite(productWrapper.product)
+        Toast.makeText(mContext, R.string.product_removed_from_favorites, Toast.LENGTH_SHORT).show()
+    }) {
+        Text(stringResource(R.string.remove_favorite))
+    }
+}
+
 
 /**
  * A composable function that displays a product's thumbnail image.
@@ -429,14 +461,14 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
 @Composable
 fun ProductListPreview() {
     Pm_products_apiTheme {
-        ProductList(Datasource().loadProductsWrapper(), onExpand = {}, onClickAddFavorite = {})
+        ProductList(Datasource().loadProductsWrapper(), isFavoriteProduct = {false}, onExpand = {}, onClickAddFavorite = {}, onClickRemoveFavorite = {})
     }
 }
 
 
 @Preview(showBackground = true)
 @Composable
-fun ProductItemPreview() {
+fun ProductItemFavoritePreview() {
     val product = Product(
         1,
         "Essence Mascara Lash Princess",
@@ -449,7 +481,26 @@ fun ProductItemPreview() {
     )
     val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
     Pm_products_apiTheme {
-        ProductItem(productWrapper, onExpand = {}, onClickAddFavorite = {})
+        ProductItem(productWrapper, onExpand = {}, isFavoriteProduct = { true }, onClickAddFavorite = {}, onClickRemoveFavorite = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProductItemNoFavoritePreview() {
+    val product = Product(
+        1,
+        "Essence Mascara Lash Princess",
+        "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.",
+        "beauty",
+        9.99,
+        2.56,
+        99,
+        "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
+    )
+    val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
+    Pm_products_apiTheme {
+        ProductItem(productWrapper, onExpand = {}, isFavoriteProduct = { false }, onClickAddFavorite = {}, onClickRemoveFavorite = {})
     }
 }
 
@@ -481,7 +532,9 @@ fun StoreGridPreview() {
             navController = rememberNavController(),
             storeState = storeState,
             onExpand = {},
-            onClickAddFavorite = {}
+            isFavoriteProduct = { false },
+            onClickAddFavorite = {},
+            onClickRemoveFavorite = {}
         )
     }
 }

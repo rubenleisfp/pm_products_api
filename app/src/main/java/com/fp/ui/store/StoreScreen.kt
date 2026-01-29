@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
@@ -34,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,15 +73,22 @@ fun StoreScreen(
     storeViewModel: StoreViewModel,
     favoriteViewModel: FavoriteViewModel
 ) {
-    val productState by storeViewModel.uiState.collectAsState()
-    StoreGrid(
-        navController,
-        storeState = productState,
-        onExpand = { storeViewModel.onDetailSelected(it) },
-        isFavoriteProduct = { favoriteViewModel.isFavoriteProduct(it) },
-        onClickAddFavorite = { favoriteViewModel.addFavoriteProduct(it) },
-        onClickRemoveFavorite = { favoriteViewModel.deleteFavoriteProductById(it.id) })
+    val storeState by storeViewModel.uiState.collectAsState()
+    val favoriteState by favoriteViewModel.uiState.collectAsState()
 
+    // Precalculamos los favoritos como Set para eficiencia
+    val favoriteIds = remember(favoriteState.favoriteProductList) {
+        favoriteState.favoriteProductList.map { it.id }.toSet()
+    }
+
+    StoreGrid(
+        navController = navController,
+        storeState = storeState,
+        favoriteIds = favoriteIds,
+        onExpand = { storeViewModel.onDetailSelected(it) },
+        onClickAddFavorite = { favoriteViewModel.addFavoriteProduct(it) },
+        onClickRemoveFavorite = { favoriteViewModel.deleteFavoriteProductById(it.id) }
+    )
 }
 
 /**
@@ -97,13 +106,12 @@ fun StoreScreen(
 fun StoreGrid(
     navController: NavController,
     storeState: StoreState,
+    favoriteIds: Set<Int>,
     onExpand: (Int) -> Unit,
-    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
     onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Scaffold(
         topBar = {
             StoreTopAppBar(title = stringResource(R.string.app_name), navController = navController)
@@ -113,28 +121,24 @@ fun StoreGrid(
         when (storeState.action) {
             ActionEnum.ERROR -> ErrorScreen()
 
-            ActionEnum.READ ->
-                Column(
-                    modifier = modifier
-                        .padding(innerPadding),
-                    verticalArrangement = Arrangement.spacedBy(36.dp)
-                ) {
+            ActionEnum.READ -> {
+                ProductList(
+                    productWrapperList = storeState.productPageWrapper.productsWrapper,
+                    favoriteIds = favoriteIds,
+                    onExpand = onExpand,
+                    onClickAddFavorite = onClickAddFavorite,
+                    onClickRemoveFavorite = onClickRemoveFavorite,
+                    modifier = modifier.padding(innerPadding)
+                )
+            }
 
-                    ProductList(
-                        productWrapperList = storeState.productPageWrapper.productsWrapper,
-                        onExpand = onExpand,
-                        isFavoriteProduct = isFavoriteProduct,
-                        onClickAddFavorite = onClickAddFavorite,
-                        onClickRemoveFavorite = onClickRemoveFavorite,
-                        modifier = modifier,
-                    )
-
-                }
-
-            ActionEnum.IS_LOADING -> TODO() //DO NOTHING
+            ActionEnum.IS_LOADING -> {
+                // Aquí podrías meter un CircularProgressIndicator
+            }
         }
     }
 }
+
 
 
 /**
@@ -150,21 +154,23 @@ fun StoreGrid(
 @Composable
 fun ProductList(
     productWrapperList: List<ProductWrapper>,
+    favoriteIds: Set<Int>,
     onExpand: (Int) -> Unit,
-    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
     onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        itemsIndexed(productWrapperList) { index, productWrapper ->
+        items(
+            items = productWrapperList,
+            key = { it.id }
+        ) { productWrapper ->
             ProductItem(
                 productWrapper = productWrapper,
+                isFavorite = productWrapper.id in favoriteIds,
                 onExpand = onExpand,
-                isFavoriteProduct = isFavoriteProduct,
                 onClickAddFavorite = onClickAddFavorite,
-                onClickRemoveFavorite = onClickRemoveFavorite,
-                modifier = modifier
+                onClickRemoveFavorite = onClickRemoveFavorite
             )
         }
     }
@@ -272,21 +278,20 @@ fun ErrorScreen() {
 @Composable
 fun ProductItem(
     productWrapper: ProductWrapper,
+    isFavorite: Boolean,
     onExpand: (Int) -> Unit,
-    isFavoriteProduct: (ProductWrapper) -> Boolean,
     onClickAddFavorite: (Product) -> Unit,
     onClickRemoveFavorite: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier.padding(dimensionResource(id = R.dimen.padding_small))) {
         Column(
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
+            modifier = Modifier.animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
                 )
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -300,25 +305,17 @@ fun ProductItem(
                     expanded = productWrapper.expanded,
                     onExpand = { onExpand(productWrapper.id) }
                 )
+            }
 
-            }
             if (productWrapper.expanded) {
-                ProductDetails(
-                    productWrapper = productWrapper,
-                    modifier = Modifier.padding(
-                        start = dimensionResource(R.dimen.padding_medium),
-                        top = dimensionResource(R.dimen.padding_small),
-                        end = dimensionResource(R.dimen.padding_medium),
-                        bottom = dimensionResource(R.dimen.padding_medium)
-                    )
-                )
+                ProductDetails(productWrapper = productWrapper)
             }
-            if (isFavoriteProduct(productWrapper)) {
+
+            if (isFavorite) {
                 RemoveFavorite(onClickRemoveFavorite, productWrapper)
             } else {
                 AddFavorite(onClickAddFavorite, productWrapper)
             }
-
         }
     }
 }
@@ -461,7 +458,13 @@ fun ProductInformation(product: Product, modifier: Modifier = Modifier) {
 @Composable
 fun ProductListPreview() {
     Pm_products_apiTheme {
-        ProductList(Datasource().loadProductsWrapper(), isFavoriteProduct = {false}, onExpand = {}, onClickAddFavorite = {}, onClickRemoveFavorite = {})
+        ProductList(
+            productWrapperList = Datasource().loadProductsWrapper(),
+            favoriteIds = emptySet(),
+            onExpand = {},
+            onClickAddFavorite = {},
+            onClickRemoveFavorite = {}
+        )
     }
 }
 
@@ -481,7 +484,7 @@ fun ProductItemFavoritePreview() {
     )
     val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
     Pm_products_apiTheme {
-        ProductItem(productWrapper, onExpand = {}, isFavoriteProduct = { true }, onClickAddFavorite = {}, onClickRemoveFavorite = {})
+        ProductItem(productWrapper, onExpand = {}, isFavorite = true, onClickAddFavorite = {}, onClickRemoveFavorite = {})
     }
 }
 
@@ -500,7 +503,7 @@ fun ProductItemNoFavoritePreview() {
     )
     val productWrapper = ProductWrapper(product = product, id = 1, expanded = false)
     Pm_products_apiTheme {
-        ProductItem(productWrapper, onExpand = {}, isFavoriteProduct = { false }, onClickAddFavorite = {}, onClickRemoveFavorite = {})
+        ProductItem(productWrapper, onExpand = {}, isFavorite = false, onClickAddFavorite = {}, onClickRemoveFavorite = {})
     }
 }
 
@@ -531,8 +534,8 @@ fun StoreGridPreview() {
         StoreGrid(
             navController = rememberNavController(),
             storeState = storeState,
+            favoriteIds = emptySet(),
             onExpand = {},
-            isFavoriteProduct = { false },
             onClickAddFavorite = {},
             onClickRemoveFavorite = {}
         )

@@ -3,7 +3,9 @@
 # Rama 
 En esta rama se invoca el API Rest con inyección de dependencias. Se colapsa el el detalle del producto permitiendo expandirlo para ver más
 información.
-También tenemo una pantalla de navegación que permite movernos entre la página principal, el listado de productos y favoritos.
+También tenemos una pantalla de navegación que permite movernos entre la página principal, el listado de productos y favoritos.
+Permite guardar en favoritos desde la pantalla de productos y el borrado de favoritos, tanto 
+desde la pantalla de productos como desde la pantalla de favoritos
 
 # Objetivo
 

@@ -99,21 +99,6 @@ class FavoriteViewModel(
         }
     }
 
-
-
-
-    /**
-     * Finds if the product was added to favorit lis
-     */
-    fun isFavoriteProduct(productWrapper: ProductWrapper): Boolean {
-
-        val isFavorite = uiState.value.favoriteProductList.find { it.id == productWrapper.id } != null
-        Log.i(LOG_TAG, "productWrapper ${productWrapper}")
-        Log.i(LOG_TAG, "isFavoriteProduct $isFavorite")
-        return isFavorite
-    }
-
-
     private fun convertToFavoriteProduct(product: Product): FavoriteProduct {
         return FavoriteProduct(
             id = product.id,
